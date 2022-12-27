@@ -1,11 +1,17 @@
 package gin_healthcheck
 
 type Config struct {
-	HealthPath string
+	HealthPath  string
+	Method      string
+	StatusOK    int
+	StatusNotOK int
 }
 
 func DefaultConfig() Config {
 	return Config{
-		HealthPath: "/healthz",
+		HealthPath:  "/healthz",
+		Method:      "GET",
+		StatusOK:    200,
+		StatusNotOK: 503,
 	}
 }

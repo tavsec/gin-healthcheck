@@ -1,7 +1,11 @@
 package gin_healthcheck
 
 import (
+	"encoding/json"
+	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/gin-gonic/gin"
+	"github.com/tavsec/gin-healthcheck/checks"
+	"github.com/tavsec/gin-healthcheck/controllers"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -19,7 +23,7 @@ func init() {
 func TestInitHealthcheckWithDefaultConfig(t *testing.T) {
 	router := gin.Default()
 	config := DefaultConfig()
-	err := New(router, config)
+	err := New(router, config, make([]checks.Check, 0))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -31,12 +35,31 @@ func TestInitHealthcheckWithDefaultConfig(t *testing.T) {
 	}
 }
 
-func TestHealthcheckResponse(t *testing.T) {
+func TestHealthcheckResponseNoChecks(t *testing.T) {
 	router := gin.Default()
 	config := DefaultConfig()
-	New(router, config)
+	New(router, config, make([]checks.Check, 0))
 
-	assertRequest(t, router, "GET", config.HealthPath, "", 200, "")
+	assertRequest(t, router, "GET", config.HealthPath, "", 200, "[]")
+}
+
+func TestHealthcheckResponseMySqlCheck(t *testing.T) {
+	router := gin.Default()
+	config := DefaultConfig()
+	db, _, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+	defer db.Close()
+
+	c := []checks.Check{checks.SqlCheck{Sql: db}}
+	New(router, config, c)
+
+	response, err := json.Marshal([]controllers.CheckStatus{controllers.CheckStatus{
+		Name: "mysql",
+		Pass: true,
+	}})
+	assertRequest(t, router, "GET", config.HealthPath, "", 200, string(response))
 }
 
 func assertRequest(t *testing.T, router *gin.Engine, method string, path string, body string, assertStatus int, assertBody string) {
