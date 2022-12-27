@@ -38,7 +38,7 @@ func TestInitHealthcheckWithDefaultConfig(t *testing.T) {
 func TestHealthcheckResponseNoChecks(t *testing.T) {
 	router := gin.Default()
 	config := DefaultConfig()
-	New(router, config, make([]checks.Check, 0))
+	New(router, config, []checks.Check{})
 
 	assertRequest(t, router, "GET", config.HealthPath, "", 200, "[]")
 }
@@ -55,7 +55,7 @@ func TestHealthcheckResponseMySqlCheck(t *testing.T) {
 	c := []checks.Check{checks.SqlCheck{Sql: db}}
 	New(router, config, c)
 
-	response, err := json.Marshal([]controllers.CheckStatus{controllers.CheckStatus{
+	response, err := json.Marshal([]controllers.CheckStatus{{
 		Name: "mysql",
 		Pass: true,
 	}})
