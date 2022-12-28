@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/tavsec/gin-healthcheck/checks"
+	"github.com/tavsec/gin-healthcheck/config"
 )
 
 type CheckStatus struct {
@@ -10,18 +11,23 @@ type CheckStatus struct {
 	Pass bool   `json:"pass"`
 }
 
-func HealthcheckController(checks []checks.Check) gin.HandlerFunc {
+func HealthcheckController(checks []checks.Check, config config.Config) gin.HandlerFunc {
 	statuses := make([]CheckStatus, 0)
+	httpStatus := config.StatusOK
 	for _, check := range checks {
 		pass := check.Pass()
 		statuses = append(statuses, CheckStatus{
 			Name: check.Name(),
 			Pass: pass,
 		})
+
+		if !pass {
+			httpStatus = config.StatusNotOK
+		}
 	}
 
 	fn := func(c *gin.Context) {
-		c.JSON(200, statuses)
+		c.JSON(httpStatus, statuses)
 	}
 
 	return gin.HandlerFunc(fn)

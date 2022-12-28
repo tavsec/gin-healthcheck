@@ -29,3 +29,19 @@ func TestSqlCheck_Name(t *testing.T) {
 		t.Errorf("Expected SqlCheck.Name to return 'mysql', got '%s'", check.Name())
 	}
 }
+
+func TestSqlCheck_Fail(t *testing.T) {
+	db, _, err := sqlmock.New()
+	db.Close()
+
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+	defer db.Close()
+
+	check := SqlCheck{Sql: db}
+	if check.Pass() {
+		t.Errorf("Expected SqlCheck.Pass to return false, got true")
+	}
+
+}

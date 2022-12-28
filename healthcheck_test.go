@@ -5,6 +5,7 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/gin-gonic/gin"
 	"github.com/tavsec/gin-healthcheck/checks"
+	config2 "github.com/tavsec/gin-healthcheck/config"
 	"github.com/tavsec/gin-healthcheck/controllers"
 	"net/http"
 	"net/http/httptest"
@@ -22,7 +23,7 @@ func init() {
 
 func TestInitHealthcheckWithDefaultConfig(t *testing.T) {
 	router := gin.Default()
-	config := DefaultConfig()
+	config := config2.DefaultConfig()
 	err := New(router, config, make([]checks.Check, 0))
 	if err != nil {
 		t.Fatal(err)
@@ -37,7 +38,7 @@ func TestInitHealthcheckWithDefaultConfig(t *testing.T) {
 
 func TestHealthcheckResponseNoChecks(t *testing.T) {
 	router := gin.Default()
-	config := DefaultConfig()
+	config := config2.DefaultConfig()
 	New(router, config, []checks.Check{})
 
 	assertRequest(t, router, "GET", config.HealthPath, "", 200, "[]")
@@ -45,7 +46,7 @@ func TestHealthcheckResponseNoChecks(t *testing.T) {
 
 func TestHealthcheckResponseMySqlCheck(t *testing.T) {
 	router := gin.Default()
-	config := DefaultConfig()
+	config := config2.DefaultConfig()
 	db, _, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)

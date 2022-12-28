@@ -1,4 +1,4 @@
-package gin_healthcheck
+package config
 
 type Config struct {
 	HealthPath  string
