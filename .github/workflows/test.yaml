@@ -1,9 +1,15 @@
 name: Upload Go test results
 
-on: [push]
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
 
 jobs:
-    build:
+    test:
 
         runs-on: ubuntu-latest
         strategy:
