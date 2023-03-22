@@ -30,7 +30,9 @@ func main() {
 This will add the healthcheck endpoint to default path, which is `/healthz`. The path can be customized
 using `healthcheck.Config` structure. In the example above, no specific checks will be included, only API availability.
 
-### Adding additional checks
+## Health checks
+
+### SQL
 Currently, gin-healthcheck comes with SQL check, which will send `ping` request to SQL.
 ```go
 package main
@@ -53,7 +55,29 @@ func main() {
 }
 ```
 
-Besides that, you can extend the functionality and create your own check, utilising the `Check` interface: 
+### Ping
+In case you want to ensure that your application can reach seperate service, 
+you can utilise `PingCheck`.
+```go
+package main
+
+import (
+    "github.com/gin-gonic/gin"
+    healthcheck "github.com/tavsec/gin-healthcheck"
+    "github.com/tavsec/gin-healthcheck/checks"
+)
+
+func main() {
+    r := gin.Default()
+
+    pingCheck := checks.NewPingCheck("https://www.google.com", "GET", 1000, nil, nil)
+    healthcheck.New(r, healthcheck.DefaultConfig(), []checks.Check{pingCheck})
+	
+    r.Run()
+```
+
+### Custom checks
+Besides built-in health checks, you can extend the functionality and create your own check, utilising the `Check` interface: 
 ```go
 package checks
 
