@@ -1,4 +1,7 @@
 # Gin Healthcheck
+[![Go Reference](https://pkg.go.dev/badge/github.com/tavsec/gin-healthcheck.svg)](https://pkg.go.dev/github.com/tavsec/gin-healthcheck)
+![tests](https://github.com/tavsec/gin-healthcheck/actions/workflows/test.yaml/badge.svg)
+
 This module will create a simple endpoint for Gin framework, 
 which can be used to determined healthiness of Gin application.
 
