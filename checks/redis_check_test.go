@@ -14,7 +14,7 @@ func TestRedisCheck_Pass(t *testing.T) {
 	mock.ExpectPing().SetVal("PONG")
 
 	// create a RedisCheck instance using the mock client
-	redisCheck := RedisCheck{Client: mockClient}
+	redisCheck := NewRedisCheck(mockClient)
 
 	// call Pass() method and assert that it returns true
 	assert.True(t, redisCheck.Pass())
@@ -25,7 +25,7 @@ func TestRedisCheck_Fail(t *testing.T) {
 	mock.ExpectPing().SetErr(errors.New("ping failed"))
 
 	// create a RedisCheck instance using the mock client
-	redisCheck := RedisCheck{Client: mockClient}
+	redisCheck := NewRedisCheck(mockClient)
 
 	// call Pass() method and assert that it returns false
 	assert.False(t, redisCheck.Pass())
@@ -36,7 +36,7 @@ func TestRedisCheck_Name(t *testing.T) {
 	mockClient, _ := redismock.NewClientMock()
 
 	// create a RedisCheck instance using the mock client
-	redisCheck := RedisCheck{Client: mockClient}
+	redisCheck := NewRedisCheck(mockClient)
 
 	// call Name() method and assert that it returns "redis"
 	assert.Equal(t, "redis", redisCheck.Name())

@@ -34,23 +34,25 @@ using `healthcheck.Config` structure. In the example above, no specific checks w
 
 ### SQL
 Currently, gin-healthcheck comes with SQL check, which will send `ping` request to SQL.
+
 ```go
 package main
 
 import (
+    "database/sql"
     "github.com/gin-gonic/gin"
     healthcheck "github.com/tavsec/gin-healthcheck"
     "github.com/tavsec/gin-healthcheck/checks"
+    "github.com/tavsec/gin-healthcheck/config"
 )
 
 func main() {
     r := gin.Default()
-
-    // Initialize Database
-    // db := ...
-    // ...
-    healthcheck.New(r, healthcheck.DefaultConfig(), []checks.Check{checks.SqlCheck{Sql: db}})
 	
+	db, _ := sql.Open("mysql", "user:password@tcp(127.0.0.1:3306)/hello")
+	sqlCheck := checks.SqlCheck{Sql: db}
+    healthcheck.New(r, config.DefaultConfig(), []checks.Check{sqlCheck})
+
     r.Run()
 }
 ```
@@ -58,6 +60,7 @@ func main() {
 ### Ping
 In case you want to ensure that your application can reach seperate service, 
 you can utilise `PingCheck`.
+
 ```go
 package main
 
@@ -65,14 +68,43 @@ import (
     "github.com/gin-gonic/gin"
     healthcheck "github.com/tavsec/gin-healthcheck"
     "github.com/tavsec/gin-healthcheck/checks"
+    "github.com/tavsec/gin-healthcheck/config"
 )
 
 func main() {
     r := gin.Default()
 
     pingCheck := checks.NewPingCheck("https://www.google.com", "GET", 1000, nil, nil)
-    healthcheck.New(r, healthcheck.DefaultConfig(), []checks.Check{pingCheck})
-	
+    healthcheck.New(r, config.DefaultConfig(), []checks.Check{pingCheck})
+
+    r.Run()
+```
+
+### Redis check
+You can perform Redis ping check using `RedisCheck` checker:
+
+```go
+package main
+
+import (
+    "github.com/gin-gonic/gin"
+    healthcheck "github.com/tavsec/gin-healthcheck"
+    "github.com/tavsec/gin-healthcheck/checks"
+    "github.com/tavsec/gin-healthcheck/config"
+    "github.com/redis/go-redis/v9"
+)
+
+func main() {
+    r := gin.Default()
+
+    rdb := redis.NewClient(&redis.Options{
+        Addr:     "localhost:6379",
+        Password: "",
+        DB:       0,
+    })
+    redisCheck := checks.NewRedisCheck(rdb)
+    healthcheck.New(r, config.DefaultConfig(), []checks.Check{redisCheck})
+
     r.Run()
 ```
 

@@ -9,6 +9,11 @@ type RedisCheck struct {
 	Client *redis.Client
 }
 
+func NewRedisCheck(client *redis.Client) RedisCheck {
+	check := RedisCheck{Client: client}
+	return check
+}
+
 func (r *RedisCheck) Pass() bool {
 	_, err := r.Client.Ping(context.Background()).Result()
 	if err != nil {
