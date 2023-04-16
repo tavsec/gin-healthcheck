@@ -117,7 +117,7 @@ You can check if environmental variable is set using `EnvCheck`:
 package main
 
 import (
-	"github.com/gin-gonic/gin"
+    "github.com/gin-gonic/gin"
     healthcheck "github.com/tavsec/gin-healthcheck"
     "github.com/tavsec/gin-healthcheck/checks"
     "github.com/tavsec/gin-healthcheck/config"
@@ -130,7 +130,7 @@ func main(){
 	
 	// You can also validate env format using regex
     dbUserCheck := checks.NewEnvCheck("DB_HOST")
-	dbUserCheck.SetRegexValidator("^USER_")
+    dbUserCheck.SetRegexValidator("^USER_")
 	
     healthcheck.New(r, config.DefaultConfig(), []checks.Check{dbHostCheck, dbUserCheck})
 
