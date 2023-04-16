@@ -111,6 +111,34 @@ func main() {
     r.Run()
 ```
 
+### Environmental variables check
+You can check if environmental variable is set using `EnvCheck`:
+```go
+package main
+
+import (
+	"github.com/gin-gonic/gin"
+    healthcheck "github.com/tavsec/gin-healthcheck"
+    "github.com/tavsec/gin-healthcheck/checks"
+    "github.com/tavsec/gin-healthcheck/config"
+)
+
+func main(){
+    r := gin.Default()
+
+    dbHostCheck := checks.NewEnvCheck("DB_HOST")
+	
+	// You can also validate env format using regex
+    dbUserCheck := checks.NewEnvCheck("DB_HOST")
+	dbUserCheck.SetRegexValidator("^USER_")
+	
+    healthcheck.New(r, config.DefaultConfig(), []checks.Check{dbHostCheck, dbUserCheck})
+
+    r.Run()
+}
+
+```
+
 ### Custom checks
 Besides built-in health checks, you can extend the functionality and create your own check, utilising the `Check` interface: 
 ```go
