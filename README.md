@@ -52,8 +52,8 @@ import (
 func main() {
     r := gin.Default()
 	
-	db, _ := sql.Open("mysql", "user:password@tcp(127.0.0.1:3306)/hello")
-	sqlCheck := checks.SqlCheck{Sql: db}
+    db, _ := sql.Open("mysql", "user:password@tcp(127.0.0.1:3306)/hello")
+    sqlCheck := checks.SqlCheck{Sql: db}
     healthcheck.New(r, config.DefaultConfig(), []checks.Check{sqlCheck})
 
     r.Run()
