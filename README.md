@@ -128,7 +128,7 @@ func main(){
 
     dbHostCheck := checks.NewEnvCheck("DB_HOST")
 	
-	// You can also validate env format using regex
+    // You can also validate env format using regex
     dbUserCheck := checks.NewEnvCheck("DB_HOST")
     dbUserCheck.SetRegexValidator("^USER_")
 	
