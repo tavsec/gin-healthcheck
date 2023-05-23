@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/gin-gonic/gin v1.9.0
-	github.com/go-redis/redismock/v9 v9.0.2
+	github.com/go-redis/redismock/v9 v9.0.3
 	github.com/redis/go-redis/v9 v9.0.3
 	github.com/stretchr/testify v1.8.2
 )
