@@ -1,14 +1,17 @@
 package controllers
 
 import (
+	"database/sql/driver"
 	"encoding/json"
-	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/tavsec/gin-healthcheck/checks"
-	"github.com/tavsec/gin-healthcheck/config"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/stretchr/testify/assert"
+	"github.com/tavsec/gin-healthcheck/checks"
+	"github.com/tavsec/gin-healthcheck/config"
 
 	"github.com/gin-gonic/gin"
 )
@@ -53,8 +56,8 @@ func TestHealthcheckControllerWithSqlCheck(t *testing.T) {
 		Name: "mysql",
 		Pass: true,
 	}})
+	assert.NoError(t, err)
 	assertRequest(t, router, "GET", "/healthcheck", "", 200, string(response))
-
 }
 
 func TestNoPass(t *testing.T) {
@@ -65,6 +68,35 @@ func TestNoPass(t *testing.T) {
 		Name: "Failing Check",
 		Pass: false,
 	}})
+	assertRequest(t, router, "GET", "/healthcheck", "", 503, string(response))
+}
+
+func TestSwitchResultBetweenCall(t *testing.T) {
+	router := gin.New()
+	db, mock, err := sqlmock.New(sqlmock.MonitorPingsOption(true))
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+	defer db.Close()
+
+	router.GET("/healthcheck", HealthcheckController([]checks.Check{checks.SqlCheck{Sql: db}}, conf))
+
+	mock.ExpectPing().WillReturnError(nil)
+
+	response, err := json.Marshal([]CheckStatus{{
+		Name: "mysql",
+		Pass: true,
+	}})
+	assert.NoError(t, err)
+	assertRequest(t, router, "GET", "/healthcheck", "", 200, string(response))
+
+	mock.ExpectPing().WillReturnError(driver.ErrBadConn)
+
+	response, err = json.Marshal([]CheckStatus{{
+		Name: "mysql",
+		Pass: false,
+	}})
+	assert.NoError(t, err)
 	assertRequest(t, router, "GET", "/healthcheck", "", 503, string(response))
 }
 
