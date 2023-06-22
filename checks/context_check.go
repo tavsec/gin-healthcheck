@@ -8,7 +8,7 @@ import (
 
 type contextCheck struct {
 	name       string
-	terminated atomic.Uint32 // TODO: When the minimal supported base go version is 1.19, use atomic.Bool
+	terminated uint32 // TODO: When the minimal supported base go version is 1.19, use atomic.Bool
 	ctx        context.Context
 }
 
@@ -38,14 +38,15 @@ func NewContextCheck(ctx context.Context, name ...string) Check {
 
 	go func() {
 		<-ctx.Done()
-		c.terminated.Store(1)
+		atomic.StoreUint32(&c.terminated, 1)
 	}()
 
 	return &c
 }
 
 func (c *contextCheck) Pass() bool {
-	return c.terminated.Load() == 0
+	v := atomic.LoadUint32(&c.terminated)
+	return v == 0
 }
 
 func (c *contextCheck) Name() string {
