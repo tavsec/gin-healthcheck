@@ -8,7 +8,7 @@ import (
 
 type contextCheck struct {
 	name       string
-	terminated atomic.Bool
+	terminated atomic.Int32 // TODO: When the minimal supported base go version is 1.19, use atomic.Bool
 	ctx        context.Context
 }
 
@@ -38,14 +38,14 @@ func NewContextCheck(ctx context.Context, name ...string) Check {
 
 	go func() {
 		<-ctx.Done()
-		c.terminated.Store(true)
+		c.terminated.Store(1)
 	}()
 
 	return &c
 }
 
 func (c *contextCheck) Pass() bool {
-	return !c.terminated.Load()
+	return c.terminated.Load() == 0
 }
 
 func (c *contextCheck) Name() string {
