@@ -8,7 +8,7 @@ import (
 
 type contextCheck struct {
 	name       string
-	terminated atomic.Int32 // TODO: When the minimal supported base go version is 1.19, use atomic.Bool
+	terminated atomic.Uint32 // TODO: When the minimal supported base go version is 1.19, use atomic.Bool
 	ctx        context.Context
 }
 
