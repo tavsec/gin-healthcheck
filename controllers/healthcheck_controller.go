@@ -12,21 +12,21 @@ type CheckStatus struct {
 }
 
 func HealthcheckController(checks []checks.Check, config config.Config) gin.HandlerFunc {
-	statuses := make([]CheckStatus, 0)
-	httpStatus := config.StatusOK
-	for _, check := range checks {
-		pass := check.Pass()
-		statuses = append(statuses, CheckStatus{
-			Name: check.Name(),
-			Pass: pass,
-		})
-
-		if !pass {
-			httpStatus = config.StatusNotOK
-		}
-	}
-
 	fn := func(c *gin.Context) {
+		statuses := make([]CheckStatus, 0)
+		httpStatus := config.StatusOK
+		for _, check := range checks {
+			pass := check.Pass()
+			statuses = append(statuses, CheckStatus{
+				Name: check.Name(),
+				Pass: pass,
+			})
+
+			if !pass {
+				httpStatus = config.StatusNotOK
+			}
+		}
+
 		c.JSON(httpStatus, statuses)
 	}
 
