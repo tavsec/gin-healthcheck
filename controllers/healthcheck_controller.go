@@ -1,9 +1,12 @@
 package controllers
 
 import (
+	"errors"
+
 	"github.com/gin-gonic/gin"
 	"github.com/tavsec/gin-healthcheck/checks"
 	"github.com/tavsec/gin-healthcheck/config"
+	"golang.org/x/sync/errgroup"
 )
 
 type CheckStatus struct {
@@ -11,20 +14,33 @@ type CheckStatus struct {
 	Pass bool   `json:"pass"`
 }
 
+var errHealthcheckFailed = errors.New("healthcheck failed")
+
 func HealthcheckController(checks []checks.Check, config config.Config) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
-		statuses := make([]CheckStatus, 0)
-		httpStatus := config.StatusOK
-		for _, check := range checks {
-			pass := check.Pass()
-			statuses = append(statuses, CheckStatus{
-				Name: check.Name(),
-				Pass: pass,
-			})
+		var eg errgroup.Group
 
-			if !pass {
-				httpStatus = config.StatusNotOK
-			}
+		statuses := make([]CheckStatus, len(checks))
+		httpStatus := config.StatusOK
+		for idx, check := range checks {
+			captureCheck := check
+			captureIdx := idx
+			eg.Go(func() error {
+				pass := captureCheck.Pass()
+				statuses[captureIdx] = CheckStatus{
+					Name: captureCheck.Name(),
+					Pass: pass,
+				}
+
+				if !pass {
+					return errHealthcheckFailed
+				}
+				return nil
+			})
+		}
+
+		if err := eg.Wait(); err != nil {
+			httpStatus = config.StatusNotOK
 		}
 
 		c.JSON(httpStatus, statuses)
