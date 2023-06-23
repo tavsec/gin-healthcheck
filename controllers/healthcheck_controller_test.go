@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
@@ -28,6 +29,8 @@ func init() {
 
 type FailingCheck struct{}
 
+var _ checks.Check = FailingCheck{}
+
 func (c FailingCheck) Pass() bool {
 	return false
 }
@@ -35,11 +38,23 @@ func (c FailingCheck) Name() string {
 	return "Failing Check"
 }
 
+type SlowCheck struct{}
+
+var _ checks.Check = SlowCheck{}
+
+func (c SlowCheck) Pass() bool {
+	time.Sleep(2 * time.Second)
+	return true
+}
+
+func (c SlowCheck) Name() string {
+	return "Sloc Check"
+}
+
 func TestHealthcheckController(t *testing.T) {
 	router := gin.New()
 	router.GET("/healthcheck", HealthcheckController([]checks.Check{}, conf))
 	assertRequest(t, router, "GET", "/healthcheck", "", 200, "[]")
-
 }
 
 func TestHealthcheckControllerWithSqlCheck(t *testing.T) {
@@ -100,6 +115,35 @@ func TestSwitchResultBetweenCall(t *testing.T) {
 	assertRequest(t, router, "GET", "/healthcheck", "", 503, string(response))
 }
 
+func TestParallelCheck(t *testing.T) {
+	db, _, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+	defer db.Close()
+
+	router := gin.New()
+	router.GET("/healthcheck", HealthcheckController([]checks.Check{checks.SqlCheck{Sql: db}, FailingCheck{}}, conf))
+
+	response, _ := json.Marshal([]CheckStatus{{
+		Name: "mysql",
+		Pass: true,
+	}, {
+		Name: "Failing Check",
+		Pass: false,
+	}})
+	assertRequest(t, router, "GET", "/healthcheck", "", 503, string(response))
+}
+
+func TestParallelCheckSpeed(t *testing.T) {
+	f := HealthcheckController([]checks.Check{SlowCheck{}, SlowCheck{}}, conf)
+
+	start := time.Now()
+	c, _ := gin.CreateTestContext(httptest.NewRecorder())
+	f(c)
+	assert.Less(t, time.Since(start), 3*time.Second)
+}
+
 func assertRequest(t *testing.T, router *gin.Engine, method string, path string, body string, assertStatus int, assertBody string) {
 	res = httptest.NewRecorder()
 	req, _ := http.NewRequest(method, path, strings.NewReader(body))
@@ -111,5 +155,17 @@ func assertRequest(t *testing.T, router *gin.Engine, method string, path string,
 	}
 	if b := res.Body.String(); b != assertBody {
 		t.Errorf("expected %q, got %q", assertBody, b)
+	}
+}
+
+func BenchmarkCheckLatency(b *testing.B) {
+	f := HealthcheckController([]checks.Check{SlowCheck{}, SlowCheck{}}, conf)
+
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		c, _ := gin.CreateTestContext(httptest.NewRecorder())
+		f(c)
 	}
 }
