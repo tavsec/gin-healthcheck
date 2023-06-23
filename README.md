@@ -3,7 +3,7 @@
 ![tests](https://github.com/tavsec/gin-healthcheck/actions/workflows/test.yaml/badge.svg)
 
 This module will create a simple endpoint for Gin framework, 
-which can be used to determined healthiness of Gin application.
+which can be used to determine the healthiness of Gin application.
 
 ## Installation
 Install package:
@@ -30,7 +30,7 @@ func main() {
 }
 ```
 
-This will add the healthcheck endpoint to default path, which is `/healthz`. The path can be customized
+This will add the healthcheck endpoint to the default path, which is `/healthz`. The path can be customized
 using `healthcheck.Config` structure. In the example above, no specific checks will be included, only API availability.
 
 ## Health checks
@@ -61,8 +61,7 @@ func main() {
 ```
 
 ### Ping
-In case you want to ensure that your application can reach seperate service, 
-you can utilise `PingCheck`.
+In case you want to ensure that your application can reach a separate service, you can utilize `PingCheck`.
 
 ```go
 package main
@@ -112,7 +111,7 @@ func main() {
 ```
 
 ### Environmental variables check
-You can check if environmental variable is set using `EnvCheck`:
+You can check if an environmental variable is set using `EnvCheck`:
 ```go
 package main
 
@@ -136,11 +135,40 @@ func main(){
 
     r.Run()
 }
+```
 
+### context.Context check
+You can check if a context has not been canceled, by using a `ContextCheck`:
+```go
+package main
+
+import (
+    "context"
+    "net/http"
+    "os/signal"
+    "syscall"
+
+    "github.com/gin-gonic/gin"
+    healthcheck "github.com/tavsec/gin-healthcheck"
+    "github.com/tavsec/gin-healthcheck/checks"
+    "github.com/tavsec/gin-healthcheck/config"
+)
+
+func main(){
+    r := gin.Default()
+
+    ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+    defer stop()
+
+    signalsCheck := checks.NewContextCheck(ctx, "signals")
+    healthcheck.New(r, config.DefaultConfig(), []checks.Check{signalsCheck})
+
+    r.Run()
+}
 ```
 
 ### Custom checks
-Besides built-in health checks, you can extend the functionality and create your own check, utilising the `Check` interface: 
+Besides built-in health checks, you can extend the functionality and create your own check, utilizing the `Check` interface:
 ```go
 package checks
 
