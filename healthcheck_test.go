@@ -1,12 +1,14 @@
 package gin_healthcheck
 
 import (
+	"context"
 	"database/sql/driver"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/gin-gonic/gin"
@@ -23,6 +25,17 @@ var (
 func init() {
 	gin.SetMode(gin.TestMode)
 }
+
+type SucceedingCheck struct{}
+
+func (c SucceedingCheck) Pass() bool {
+	return true
+}
+func (c SucceedingCheck) Name() string {
+	return "Succeeding Check"
+}
+
+var _ checks.Check = (*SucceedingCheck)(nil)
 
 func TestInitHealthcheckWithDefaultConfig(t *testing.T) {
 	router := gin.Default()
@@ -94,6 +107,56 @@ func TestHealthcheckSwitchStateBetweenCall(t *testing.T) {
 		Name: "mysql",
 		Pass: false,
 	}})
+	assert.NoError(t, err)
+	assertRequest(t, router, "GET", config.HealthPath, "", 503, string(response))
+}
+
+func TestHealthcheckContext(t *testing.T) {
+	router := gin.Default()
+	config := config2.DefaultConfig()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	c := []checks.Check{checks.NewContextCheck(ctx), checks.NewContextCheck(context.Background(), "test"), SucceedingCheck{}}
+	New(router, config, c)
+
+	response, err := json.Marshal([]controllers.CheckStatus{
+		{
+			Name: "github.com/tavsec/gin-healthcheck.TestHealthcheckContext",
+			Pass: true,
+		},
+		{
+			Name: "test",
+			Pass: true,
+		},
+		{
+			Name: "Succeeding Check",
+			Pass: true,
+		},
+	})
+	assert.NoError(t, err)
+	assertRequest(t, router, "GET", config.HealthPath, "", 200, string(response))
+
+	cancel()
+	<-ctx.Done()
+
+	// We need to give time to the goroutine to get scheduled before checking the status
+	time.Sleep(1 * time.Millisecond)
+
+	response, err = json.Marshal([]controllers.CheckStatus{
+		{
+			Name: "github.com/tavsec/gin-healthcheck.TestHealthcheckContext",
+			Pass: false,
+		},
+		{
+			Name: "test",
+			Pass: true,
+		},
+		{
+			Name: "Succeeding Check",
+			Pass: true,
+		},
+	})
 	assert.NoError(t, err)
 	assertRequest(t, router, "GET", config.HealthPath, "", 503, string(response))
 }
