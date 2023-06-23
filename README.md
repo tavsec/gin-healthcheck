@@ -143,10 +143,10 @@ You can check if a context has not been canceled, by using a `ContextCheck`:
 package main
 
 import (
-	"context"
-	"net/http"
-	"os/signal"
-	"syscall"
+    "context"
+    "net/http"
+    "os/signal"
+    "syscall"
 
     "github.com/gin-gonic/gin"
     healthcheck "github.com/tavsec/gin-healthcheck"
@@ -157,8 +157,8 @@ import (
 func main(){
     r := gin.Default()
 
-	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
-	defer stop()
+    ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+    defer stop()
 
     signalsCheck := checks.NewContextCheck(ctx, "signals")
     healthcheck.New(r, config.DefaultConfig(), []checks.Check{signalsCheck})
