@@ -48,7 +48,7 @@ func (c SlowCheck) Pass() bool {
 }
 
 func (c SlowCheck) Name() string {
-	return "Sloc Check"
+	return "Slow Check"
 }
 
 func TestHealthcheckController(t *testing.T) {
