@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"errors"
+	"sync"
 
 	"github.com/gin-gonic/gin"
 	"github.com/tavsec/gin-healthcheck/checks"
@@ -14,9 +15,12 @@ type CheckStatus struct {
 	Pass bool   `json:"pass"`
 }
 
-var errHealthcheckFailed = errors.New("healthcheck failed")
+var ErrHealthcheckFailed = errors.New("healthcheck failed")
 
 func HealthcheckController(checks []checks.Check, config config.Config) gin.HandlerFunc {
+	var lock sync.Mutex
+	var failureInARow uint32
+
 	fn := func(c *gin.Context) {
 		var eg errgroup.Group
 
@@ -33,15 +37,28 @@ func HealthcheckController(checks []checks.Check, config config.Config) gin.Hand
 				}
 
 				if !pass {
-					return errHealthcheckFailed
+					return ErrHealthcheckFailed
 				}
 				return nil
 			})
 		}
 
+		lock.Lock()
 		if err := eg.Wait(); err != nil {
 			httpStatus = config.StatusNotOK
+			failureInARow += 1
+
+			if failureInARow >= config.FailureNotification.Threshold &&
+				config.FailureNotification.Chan != nil {
+				config.FailureNotification.Chan <- err
+			}
+		} else {
+			if failureInARow != 0 && config.FailureNotification.Chan != nil {
+				failureInARow = 0
+				config.FailureNotification.Chan <- nil
+			}
 		}
+		lock.Unlock()
 
 		c.JSON(httpStatus, statuses)
 	}
