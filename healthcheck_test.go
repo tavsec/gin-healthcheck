@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -159,6 +160,54 @@ func TestHealthcheckContext(t *testing.T) {
 	})
 	assert.NoError(t, err)
 	assertRequest(t, router, "GET", config.HealthPath, "", 503, string(response))
+}
+
+func TestNotification(t *testing.T) {
+	router := gin.Default()
+
+	config := config2.DefaultConfig()
+	config.FailureNotification.Chan = make(chan error, 1)
+	defer close(config.FailureNotification.Chan)
+	config.FailureNotification.Threshold = 3
+
+	var errNotification error
+	var wg sync.WaitGroup
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		errNotification = <-config.FailureNotification.Chan
+	}()
+
+	ctx, cancel := context.WithCancel(context.Background())
+
+	c := []checks.Check{checks.NewContextCheck(ctx)}
+	New(router, config, c)
+
+	response, err := json.Marshal([]controllers.CheckStatus{
+		{
+			Name: "github.com/tavsec/gin-healthcheck.TestNotification",
+			Pass: false,
+		},
+	})
+	assert.NoError(t, err)
+
+	cancel()
+	<-ctx.Done()
+
+	// We need to give time to the goroutine to get scheduled before checking the status
+	time.Sleep(1 * time.Millisecond)
+
+	assertRequest(t, router, "GET", config.HealthPath, "", 503, string(response))
+	assertRequest(t, router, "GET", config.HealthPath, "", 503, string(response))
+	assertRequest(t, router, "GET", config.HealthPath, "", 503, string(response))
+
+	wg.Wait()
+	assert.Equal(t, controllers.ErrHealthcheckFailed, errNotification)
+
+	assertRequest(t, router, "GET", config.HealthPath, "", 503, string(response))
+	errNotification = <-config.FailureNotification.Chan
+	assert.Equal(t, controllers.ErrHealthcheckFailed, errNotification)
 }
 
 func assertRequest(t *testing.T, router *gin.Engine, method string, path string, body string, assertStatus int, assertBody string) {
