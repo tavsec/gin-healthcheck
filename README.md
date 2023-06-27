@@ -177,3 +177,42 @@ type Check interface {
     Name() string
 }
 ```
+
+## Notification of health check failure
+
+It is possible to get notified when the health check failed a certain threshold of call. This would match for example the failureThreshold of Kubernetes and allow us to take action in that case.
+
+```go
+package main
+
+import (
+    "github.com/gin-gonic/gin"
+    healthcheck "github.com/tavsec/gin-healthcheck"
+    "github.com/tavsec/gin-healthcheck/checks"
+)
+
+func main() {
+    r := gin.Default()
+
+    conf := healthcheck.DefaultConfig()
+
+    conf.FailureNotification.Chan = make(chan error, 1)
+	defer close(conf.FailureNotification.Chan)
+	conf.FailureNotification.Threshold = 3
+
+    go func() {
+        <-conf.FailureNotification.Chan
+        os.Exit(1)
+    }
+
+    ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+    defer stop()
+
+    signalsCheck := checks.NewContextCheck(ctx, "signals")
+    healthcheck.New(r, conf, []checks.Check{signalsCheck})
+	
+    r.Run()
+}
+```
+
+Note that the following example is not doing a graceful shutdown. If Kubernetes is set up with a failureThreshold of 3, it will mark the pod as failing after that third call, but there is no guarantee that you have processed and answered all HTTP requests before the call to os.Exit(1). It is necessary to use something like https://github.com/gin-contrib/graceful at that point to have a graceful shutdown.
