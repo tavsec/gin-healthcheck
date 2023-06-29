@@ -19,19 +19,20 @@ import (
     "github.com/gin-gonic/gin"
     healthcheck "github.com/tavsec/gin-healthcheck"
     "github.com/tavsec/gin-healthcheck/checks"
+    "github.com/tavsec/gin-healthcheck/config"
 )
 
 func main() {
     r := gin.Default()
 
-    healthcheck.New(r, healthcheck.DefaultConfig(), []checks.Check{})
+    healthcheck.New(r, config.DefaultConfig(), []checks.Check{})
 	
     r.Run()
 }
 ```
 
 This will add the healthcheck endpoint to the default path, which is `/healthz`. The path can be customized
-using `healthcheck.Config` structure. In the example above, no specific checks will be included, only API availability.
+using `config.Config` structure. In the example above, no specific checks will be included, only API availability.
 
 ## Health checks
 
