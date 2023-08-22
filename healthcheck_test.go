@@ -13,10 +13,10 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/gin-gonic/gin"
+	"github.com/rsmnarts/gin-healthcheck/checks"
+	config2 "github.com/rsmnarts/gin-healthcheck/config"
+	"github.com/rsmnarts/gin-healthcheck/controllers"
 	"github.com/stretchr/testify/assert"
-	"github.com/tavsec/gin-healthcheck/checks"
-	config2 "github.com/tavsec/gin-healthcheck/config"
-	"github.com/tavsec/gin-healthcheck/controllers"
 )
 
 var (
@@ -123,7 +123,7 @@ func TestHealthcheckContext(t *testing.T) {
 
 	response, err := json.Marshal([]controllers.CheckStatus{
 		{
-			Name: "github.com/tavsec/gin-healthcheck.TestHealthcheckContext",
+			Name: "github.com/rsmnarts/gin-healthcheck.TestHealthcheckContext",
 			Pass: true,
 		},
 		{
@@ -146,7 +146,7 @@ func TestHealthcheckContext(t *testing.T) {
 
 	response, err = json.Marshal([]controllers.CheckStatus{
 		{
-			Name: "github.com/tavsec/gin-healthcheck.TestHealthcheckContext",
+			Name: "github.com/rsmnarts/gin-healthcheck.TestHealthcheckContext",
 			Pass: false,
 		},
 		{
@@ -186,7 +186,7 @@ func TestNotification(t *testing.T) {
 
 	response, err := json.Marshal([]controllers.CheckStatus{
 		{
-			Name: "github.com/tavsec/gin-healthcheck.TestNotification",
+			Name: "github.com/rsmnarts/gin-healthcheck.TestNotification",
 			Pass: false,
 		},
 	})

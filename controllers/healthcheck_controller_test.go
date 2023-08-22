@@ -11,9 +11,9 @@ import (
 	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/rsmnarts/gin-healthcheck/checks"
+	"github.com/rsmnarts/gin-healthcheck/config"
 	"github.com/stretchr/testify/assert"
-	"github.com/tavsec/gin-healthcheck/checks"
-	"github.com/tavsec/gin-healthcheck/config"
 
 	"github.com/gin-gonic/gin"
 )

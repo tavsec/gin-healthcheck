@@ -1,4 +1,4 @@
-module github.com/tavsec/gin-healthcheck
+module github.com/rsmnarts/gin-healthcheck
 
 go 1.19
 
