@@ -22,7 +22,7 @@ var (
 	failureInARow uint32
 )
 
-func HealthcheckService(checks []checks.Check, config config.Config) (int, []CheckStatus) {
+func Healthcheck(checks []checks.Check, config config.Config) (int, []CheckStatus) {
 	var (
 		eg errgroup.Group
 
@@ -69,7 +69,7 @@ func HealthcheckService(checks []checks.Check, config config.Config) (int, []Che
 
 func HealthcheckController(checks []checks.Check, config config.Config) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
-		c.JSON(HealthcheckService(checks, config))
+		c.JSON(Healthcheck(checks, config))
 	}
 
 	return gin.HandlerFunc(fn)
