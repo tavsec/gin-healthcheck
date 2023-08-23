@@ -5,8 +5,8 @@ import (
 	"sync"
 
 	"github.com/gin-gonic/gin"
-	"github.com/rsmnarts/gin-healthcheck/checks"
-	"github.com/rsmnarts/gin-healthcheck/config"
+	"github.com/tavsec/gin-healthcheck/checks"
+	"github.com/tavsec/gin-healthcheck/config"
 	"golang.org/x/sync/errgroup"
 )
 

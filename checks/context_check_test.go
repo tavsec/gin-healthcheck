@@ -16,7 +16,7 @@ func TestContextCheck(t *testing.T) {
 	c := NewContextCheck(ctx)
 
 	assert.NotNil(t, c)
-	assert.Equal(t, "github.com/rsmnarts/gin-healthcheck/checks.TestContextCheck", c.Name())
+	assert.Equal(t, "github.com/tavsec/gin-healthcheck/checks.TestContextCheck", c.Name())
 	assert.True(t, c.Pass())
 
 	cancel()
