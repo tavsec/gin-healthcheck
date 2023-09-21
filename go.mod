@@ -6,7 +6,7 @@ require (
 	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-redis/redismock/v9 v9.0.3
-	github.com/redis/go-redis/v9 v9.1.0
+	github.com/redis/go-redis/v9 v9.2.0
 	github.com/stretchr/testify v1.8.4
 	golang.org/x/sync v0.3.0
 )
