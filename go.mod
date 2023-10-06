@@ -8,7 +8,7 @@ require (
 	github.com/go-redis/redismock/v9 v9.0.3
 	github.com/redis/go-redis/v9 v9.1.0
 	github.com/stretchr/testify v1.8.4
-	golang.org/x/sync v0.3.0
+	golang.org/x/sync v0.4.0
 )
 
 require (
