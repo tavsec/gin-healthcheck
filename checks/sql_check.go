@@ -3,20 +3,20 @@ package checks
 import "database/sql"
 
 type SqlCheck struct {
-	Sql *sql.DB
+	Title string
+	Sql   *sql.DB
 }
 
 func (s SqlCheck) Pass() bool {
 	if s.Sql == nil {
 		return false
 	}
-	err := s.Sql.Ping()
-	if err != nil {
-		return false
-	}
-	return true
+	return s.Sql.Ping() == nil
 }
 
 func (s SqlCheck) Name() string {
+	if s.Title != "" {
+		return s.Title
+	}
 	return "mysql"
 }
