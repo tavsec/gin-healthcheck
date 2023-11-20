@@ -16,10 +16,7 @@ func NewRedisCheck(client *redis.Client) RedisCheck {
 
 func (r *RedisCheck) Pass() bool {
 	_, err := r.Client.Ping(context.Background()).Result()
-	if err != nil {
-		return false
-	}
-	return true
+	return err == nil
 }
 
 func (r *RedisCheck) Name() string {
