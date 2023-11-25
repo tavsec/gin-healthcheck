@@ -81,7 +81,7 @@ func TestHealthcheckControllerWithSqlCheck(t *testing.T) {
 	router.GET("/healthcheck", HealthcheckController([]checks.Check{checks.SqlCheck{Sql: db}}, conf))
 
 	response, err := json.Marshal([]CheckStatus{{
-		Name: "mysql",
+		Name: "*sqlmock.mockDriver",
 		Pass: true,
 	}})
 	assert.NoError(t, err)
@@ -112,7 +112,7 @@ func TestSwitchResultBetweenCall(t *testing.T) {
 	mock.ExpectPing().WillReturnError(nil)
 
 	response, err := json.Marshal([]CheckStatus{{
-		Name: "mysql",
+		Name: "*sqlmock.mockDriver",
 		Pass: true,
 	}})
 	assert.NoError(t, err)
@@ -121,7 +121,7 @@ func TestSwitchResultBetweenCall(t *testing.T) {
 	mock.ExpectPing().WillReturnError(driver.ErrBadConn)
 
 	response, err = json.Marshal([]CheckStatus{{
-		Name: "mysql",
+		Name: "*sqlmock.mockDriver",
 		Pass: false,
 	}})
 	assert.NoError(t, err)
@@ -139,7 +139,7 @@ func TestParallelCheck(t *testing.T) {
 	router.GET("/healthcheck", HealthcheckController([]checks.Check{checks.SqlCheck{Sql: db}, FailingCheck{}}, conf))
 
 	response, _ := json.Marshal([]CheckStatus{{
-		Name: "mysql",
+		Name: "*sqlmock.mockDriver",
 		Pass: true,
 	}, {
 		Name: "Failing Check",

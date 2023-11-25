@@ -13,6 +13,11 @@ func TestSqlCheck_Pass(t *testing.T) {
 	defer db.Close()
 
 	check := SqlCheck{Sql: db}
+
+	if check.Name() != "*sqlmock.mockDriver" {
+		t.Errorf("Expected SqlCheck.Name to return '*sqlmock.mockDriver', got '" + check.Name() + "'")
+	}
+
 	if !check.Pass() {
 		t.Errorf("Expected SqlCheck.Pass to return true, got false")
 	}
@@ -25,7 +30,7 @@ func TestSqlCheck_Pass(t *testing.T) {
 
 func TestSqlCheck_Name(t *testing.T) {
 	check := SqlCheck{Sql: nil}
-	if check.Name() != "mysql" {
+	if check.Name() != "no_driver" {
 		t.Errorf("Expected SqlCheck.Name to return 'mysql', got '%s'", check.Name())
 	}
 }
