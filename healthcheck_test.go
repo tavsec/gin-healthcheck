@@ -74,7 +74,7 @@ func TestHealthcheckResponseMySqlCheck(t *testing.T) {
 	New(router, config, c)
 
 	response, err := json.Marshal([]controllers.CheckStatus{{
-		Name: "mysql",
+		Name: "*sqlmock.mockDriver",
 		Pass: true,
 	}})
 	assert.NoError(t, err)
@@ -96,7 +96,7 @@ func TestHealthcheckSwitchStateBetweenCall(t *testing.T) {
 	New(router, config, c)
 
 	response, err := json.Marshal([]controllers.CheckStatus{{
-		Name: "mysql",
+		Name: "*sqlmock.mockDriver",
 		Pass: true,
 	}})
 	assert.NoError(t, err)
@@ -105,7 +105,7 @@ func TestHealthcheckSwitchStateBetweenCall(t *testing.T) {
 	mock.ExpectPing().WillReturnError(driver.ErrBadConn)
 
 	response, err = json.Marshal([]controllers.CheckStatus{{
-		Name: "mysql",
+		Name: "*sqlmock.mockDriver",
 		Pass: false,
 	}})
 	assert.NoError(t, err)
