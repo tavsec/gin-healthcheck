@@ -3,7 +3,7 @@ module github.com/tavsec/gin-healthcheck
 go 1.19
 
 require (
-	github.com/DATA-DOG/go-sqlmock v1.5.0
+	github.com/DATA-DOG/go-sqlmock v1.5.1
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-redis/redismock/v9 v9.2.0
 	github.com/redis/go-redis/v9 v9.3.0
