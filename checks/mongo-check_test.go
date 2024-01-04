@@ -21,7 +21,7 @@ func TestMongoCheck_Pass(t *testing.T) {
 func TestMongoCheck_Name(t *testing.T) {
 	check := NewMongoCheck(2, nil)
 	if check.Name() != "mongodb" {
-		t.Errorf("Expected MongoCheck.Name to return 'mysql', got '%s'", check.Name())
+		t.Errorf("Expected MongoCheck.Name to return 'mongodb', got '%s'", check.Name())
 	}
 }
 
