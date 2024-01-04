@@ -151,6 +151,36 @@ func main() {
 }
 ```
 
+### InfluxDB V2 check
+
+You can perform MongoDB ping check using `InfluxV2` checker:
+
+```go
+package main
+
+import (
+	"github.com/gin-gonic/gin"
+	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
+	healthcheck "github.com/tavsec/gin-healthcheck"
+	"github.com/tavsec/gin-healthcheck/checks"
+	"github.com/tavsec/gin-healthcheck/config"
+)
+
+func main() {
+	r := gin.Default()
+
+	// Create an influxdbv2 client
+	client := influxdb2.NewClient("localhost:8086", "token")
+
+	influxCheck := checks.NewInfluxV2Check(10, client)
+	healthcheck.New(r, config.DefaultConfig(), []checks.Check{influxCheck})
+
+	r.Run()
+}
+
+```
+
+
 ### Environmental variables check
 
 You can check if an environmental variable is set using `EnvCheck`:
