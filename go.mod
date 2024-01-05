@@ -9,8 +9,8 @@ require (
 	github.com/influxdata/influxdb-client-go/v2 v2.13.0
 	github.com/redis/go-redis/v9 v9.3.1
 	github.com/stretchr/testify v1.8.4
-	go.mongodb.org/mongo-driver v1.11.6
-	golang.org/x/sync v0.5.0
+	go.mongodb.org/mongo-driver v1.13.1
+	golang.org/x/sync v0.6.0
 )
 
 require (
@@ -42,7 +42,6 @@ require (
 	github.com/oapi-codegen/runtime v1.0.0 // indirect
 	github.com/onsi/gomega v1.27.6 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.9 // indirect
-	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.11 // indirect
