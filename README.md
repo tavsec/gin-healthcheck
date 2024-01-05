@@ -153,7 +153,7 @@ func main() {
 
 ### InfluxDB V2 check
 
-You can perform MongoDB ping check using `InfluxV2` checker:
+You can perform InfluxDB V2 ping check using `InfluxV2` checker:
 
 ```go
 package main
@@ -179,7 +179,6 @@ func main() {
 }
 
 ```
-
 
 ### Environmental variables check
 
