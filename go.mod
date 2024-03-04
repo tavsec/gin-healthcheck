@@ -8,7 +8,7 @@ require (
 	github.com/go-redis/redismock/v9 v9.2.0
 	github.com/influxdata/influxdb-client-go/v2 v2.13.0
 	github.com/redis/go-redis/v9 v9.5.1
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.9.0
 	go.mongodb.org/mongo-driver v1.14.0
 	golang.org/x/sync v0.6.0
 )
