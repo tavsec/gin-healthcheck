@@ -2,9 +2,9 @@ package checks
 
 import (
 	"errors"
-	"github.com/go-redis/redismock/v9"
 	"testing"
 
+	"github.com/go-redis/redismock/v9"
 	"github.com/stretchr/testify/assert"
 )
 
