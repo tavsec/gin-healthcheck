@@ -2,20 +2,24 @@ package checks
 
 import (
 	"context"
+	"time"
+
 	"github.com/redis/go-redis/v9"
 )
 
 type RedisCheck struct {
-	Client *redis.Client
+	client *redis.Client
 }
 
-func NewRedisCheck(client *redis.Client) RedisCheck {
-	check := RedisCheck{Client: client}
-	return check
+func NewRedisCheck(client *redis.Client) *RedisCheck {
+	return &RedisCheck{client: client}
 }
 
 func (r *RedisCheck) Pass() bool {
-	_, err := r.Client.Ping(context.Background()).Result()
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	_, err := r.client.Ping(ctx).Result()
 	return err == nil
 }
 
