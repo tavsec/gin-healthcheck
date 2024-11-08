@@ -10,7 +10,7 @@ require (
 	github.com/redis/go-redis/v9 v9.7.0
 	github.com/stretchr/testify v1.9.0
 	go.mongodb.org/mongo-driver v1.16.1
-	golang.org/x/sync v0.8.0
+	golang.org/x/sync v0.9.0
 )
 
 require (
