@@ -182,7 +182,7 @@ func main() {
 
 ### RabbitMQ check
 
-You can perform RabbitMQ connection check using `InfluxV2` checker:
+You can perform RabbitMQ connection check using `RabbitMQCheck` checker:
 
 ```go
 package main
@@ -204,8 +204,8 @@ func main() {
 		panic(err)
 	}
 
-	influxCheck := checks.NewRabbitCheck(conn)
-	healthcheck.New(r, config.DefaultConfig(), []checks.Check{influxCheck})
+	rabbitCheck := checks.NewRabbitCheck(conn)
+	healthcheck.New(r, config.DefaultConfig(), []checks.Check{rabbitCheck})
 
 	r.Run()
 }
