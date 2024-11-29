@@ -180,6 +180,38 @@ func main() {
 
 ```
 
+### RabbitMQ check
+
+You can perform RabbitMQ connection check using `InfluxV2` checker:
+
+```go
+package main
+
+import (
+	"github.com/gin-gonic/gin"
+	amqp "github.com/rabbitmq/amqp091-go"
+	healthcheck "github.com/tavsec/gin-healthcheck"
+	"github.com/tavsec/gin-healthcheck/checks"
+	"github.com/tavsec/gin-healthcheck/config"
+)
+
+func main() {
+	r := gin.Default()
+
+	// Connect to the rabbitmq instance
+	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	if err != nil {
+		panic(err)
+	}
+
+	influxCheck := checks.NewRabbitCheck(conn)
+	healthcheck.New(r, config.DefaultConfig(), []checks.Check{influxCheck})
+
+	r.Run()
+}
+
+```
+
 ### Environmental variables check
 
 You can check if an environmental variable is set using `EnvCheck`:
