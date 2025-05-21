@@ -1,11 +1,12 @@
 module github.com/tavsec/gin-healthcheck
 
-go 1.22
+go 1.23.0
+
 toolchain go1.24.1
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.2
-	github.com/gin-gonic/gin v1.10.0
+	github.com/gin-gonic/gin v1.10.1
 	github.com/go-redis/redismock/v9 v9.2.0
 	github.com/influxdata/influxdb-client-go/v2 v2.14.0
 	github.com/rabbitmq/amqp091-go v1.10.0
