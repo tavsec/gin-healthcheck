@@ -1,6 +1,7 @@
 module github.com/tavsec/gin-healthcheck
 
-go 1.22
+go 1.23.0
+
 toolchain go1.24.1
 
 require (
@@ -9,7 +10,7 @@ require (
 	github.com/go-redis/redismock/v9 v9.2.0
 	github.com/influxdata/influxdb-client-go/v2 v2.14.0
 	github.com/rabbitmq/amqp091-go v1.10.0
-	github.com/redis/go-redis/v9 v9.7.3
+	github.com/redis/go-redis/v9 v9.9.0
 	github.com/stretchr/testify v1.10.0
 	github.com/testcontainers/testcontainers-go/modules/rabbitmq v0.37.0
 	go.mongodb.org/mongo-driver v1.17.3
