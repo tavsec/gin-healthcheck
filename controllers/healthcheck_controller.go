@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"errors"
+	"fmt"
 	"sync"
 
 	"github.com/gin-gonic/gin"
@@ -37,7 +38,7 @@ func HealthcheckController(checks []checks.Check, config config.Config) gin.Hand
 				}
 
 				if !pass {
-					return ErrHealthcheckFailed
+					return fmt.Errorf("%w: %s", ErrHealthcheckFailed, captureCheck.Name())
 				}
 				return nil
 			})
