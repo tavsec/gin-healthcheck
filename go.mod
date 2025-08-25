@@ -11,7 +11,7 @@ require (
 	github.com/influxdata/influxdb-client-go/v2 v2.14.0
 	github.com/rabbitmq/amqp091-go v1.10.0
 	github.com/redis/go-redis/v9 v9.12.0
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.11.0
 	github.com/testcontainers/testcontainers-go/modules/rabbitmq v0.38.0
 	go.mongodb.org/mongo-driver v1.17.4
 	golang.org/x/sync v0.16.0
