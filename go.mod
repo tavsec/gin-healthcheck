@@ -1,6 +1,6 @@
 module github.com/tavsec/gin-healthcheck
 
-go 1.23.0
+go 1.24.0
 
 toolchain go1.24.1
 
@@ -14,7 +14,7 @@ require (
 	github.com/stretchr/testify v1.11.1
 	github.com/testcontainers/testcontainers-go/modules/rabbitmq v0.38.0
 	go.mongodb.org/mongo-driver v1.17.4
-	golang.org/x/sync v0.16.0
+	golang.org/x/sync v0.17.0
 )
 
 require (
