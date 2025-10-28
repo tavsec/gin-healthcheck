@@ -13,7 +13,7 @@ require (
 	github.com/redis/go-redis/v9 v9.16.0
 	github.com/stretchr/testify v1.11.1
 	github.com/testcontainers/testcontainers-go/modules/rabbitmq v0.39.0
-	go.mongodb.org/mongo-driver v1.17.4
+	go.mongodb.org/mongo-driver v1.17.6
 	golang.org/x/sync v0.17.0
 )
 
