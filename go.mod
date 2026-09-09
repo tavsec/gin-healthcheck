@@ -1,6 +1,6 @@
 module github.com/tavsec/gin-healthcheck
 
-go 1.25.0
+go 1.26.0
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.2
@@ -12,7 +12,7 @@ require (
 	github.com/stretchr/testify v1.12.1
 	github.com/testcontainers/testcontainers-go/modules/rabbitmq v0.44.0
 	go.mongodb.org/mongo-driver v1.17.9
-	golang.org/x/sync v0.22.0
+	golang.org/x/sync v0.23.0
 )
 
 require (
